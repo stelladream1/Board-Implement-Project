@@ -33,7 +33,11 @@ public class MemberController {
     }
 
 
-   
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody MemberDTO memberDTO){
+
+        return ResponseEntity.ok().body(memberService.login(memberDTO));
+    }
 
 
 

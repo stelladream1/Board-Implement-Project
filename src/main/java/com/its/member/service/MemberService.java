@@ -3,6 +3,7 @@ package com.its.member.service;
 import com.its.member.dto.MemberDTO;
 import com.its.member.entity.MemberEntity;
 import com.its.member.repository.MemberRepository;
+import com.its.member.tools.JWToken;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +47,31 @@ public class MemberService {
 
     }
 
+    @Value("${jwt.secret}")
+    private String secretKey;
+    public String login(MemberDTO memberDTO) {
+        if (!isValidEmail(memberDTO.getEmail()) || !isValidPassword(memberDTO.getPassword())) {
 
+            return "로그인 정보를 다시 확인해주세요.";
+        } else {
+
+            Optional<MemberEntity> byEmail = memberRepository.findByEmail(memberDTO.getEmail());
+            if (byEmail.isPresent()) {
+
+                String token = JWToken.createJWT(memberDTO.getEmail(), secretKey);
+
+                // Set the token in the MemberEntity and save it to the database
+                MemberEntity memberEntity = byEmail.get();
+                memberEntity.setJwtToken(token);
+                memberRepository.save(memberEntity);
+
+                return token;
+            } else {
+
+                return "등록되지 않은 사용자입니다. ";
+            }
+        }
+    }
 
 
 }
