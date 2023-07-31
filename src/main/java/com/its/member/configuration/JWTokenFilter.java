@@ -44,6 +44,7 @@ public class JWTokenFilter extends OncePerRequestFilter {
         //토큰 만료 여부
         if(JWToken.isExpired(token, secretKey)){
             log.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
+            System.out.println("토큰이 만료되었습니다. 다시 로그인 해주세요");
             filterChain.doFilter(request, response);
             return;
         }
@@ -51,7 +52,7 @@ public class JWTokenFilter extends OncePerRequestFilter {
         String Email = JWToken.getEmail(token, secretKey);
         log.info(Email);
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(Email, null, List.of(new SimpleGrantedAuthority("USER")));
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(Email, null);
 
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
