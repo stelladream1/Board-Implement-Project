@@ -42,12 +42,12 @@ public class BoardController {
 
 
     @GetMapping("/list")
-    public ResponseEntity<Map<String, Object>>List(@PageableDefault(page = 1) Pageable pageable){
+    public ResponseEntity<Map<String, Object>> List(@PageableDefault(page = 1) Pageable pageable) {
         Page<BoardDTO> boardList = boardService.paging(pageable);
         Map<String, Object> responseData = new HashMap<>();
 
         int blockLimit = 3;
-        int startPage = (((int)(Math.ceil((double)pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
+        int startPage = (((int) (Math.ceil((double) pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
         int endPage = Math.min((startPage + blockLimit - 1), boardList.getTotalPages());
 
         responseData.put("List", boardList);
@@ -58,18 +58,28 @@ public class BoardController {
     }
 
     @GetMapping("/list/{id}")
-    public ResponseEntity<Map<String, Object>>findById(@PathVariable Long id){
+    public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
         BoardDTO boardDTO = boardService.findById(id);
         Map<String, Object> response = new HashMap<>();
-        if (boardDTO !=null){
+        if (boardDTO != null) {
             response.put("board", boardDTO);
             response.put("success", "게시글을 성공적으로 조회하였습니다.");
             return ResponseEntity.status(HttpStatus.OK).body(response);
-        }
-        else{
+        } else {
             response.put("fail", "해당 게시글이 없습니다");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+        String result = boardService.delete(id, token);
+        if (result.equals("성공적으록 게시글을 삭제했습니다.")) {
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+
     }
 
 }
