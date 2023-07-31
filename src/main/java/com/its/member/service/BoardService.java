@@ -15,12 +15,20 @@ public class BoardService {
 
     @Value("${jwt.secret}")
     private String secretKey;
-    public void write(BoardDTO boardDTO, String token) {
+    public BoardDTO write(BoardDTO boardDTO, String token) {
         token = token.split(" ")[1];
         String email = JWToken.getEmail(token, secretKey);
         boardDTO.setEmail(email);
+
+        if (boardDTO.getContent() == null || boardDTO.getContent().isEmpty()) {
+            throw new IllegalArgumentException("게시글 내용을 입력해주세요.");
+        }
+        else if (boardDTO.getTitle() == null || boardDTO.getTitle().isEmpty()) {
+            throw new IllegalArgumentException("게시글 내용을 입력해주세요.");
+        }
         BoardEntity boardEntity = BoardEntity.toboardEntity(boardDTO);
-        boardRepository.save(boardEntity);
+        BoardEntity savedEntity = boardRepository.save(boardEntity);
+        return BoardDTO.toBoardDTO(savedEntity);
 
 
     }
