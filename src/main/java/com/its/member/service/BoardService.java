@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class BoardService {
@@ -45,5 +48,18 @@ public class BoardService {
         // 목록: id, writer, title, hits, createdTime
         Page<BoardDTO> boardDTOS = boardEntities.map(board -> new BoardDTO(board.getId(), board.getTitle(), board.getContent(),  board.getEmail()));
         return boardDTOS;
+    }
+
+    @Transactional
+    public BoardDTO findById(Long id) {
+        Optional<BoardEntity> optionalBoardEntity = boardRepository.findById(id);
+        if (optionalBoardEntity.isPresent()) {
+            BoardEntity boardEntity = optionalBoardEntity.get();
+            BoardDTO boardDTO = BoardDTO.toBoardDTO(boardEntity);
+
+            return boardDTO;
+        } else {
+            return null;
+        }
     }
 }

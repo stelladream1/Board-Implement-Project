@@ -57,4 +57,19 @@ public class BoardController {
         return ResponseEntity.ok(responseData);
     }
 
+    @GetMapping("/list/{id}")
+    public ResponseEntity<Map<String, Object>>findById(@PathVariable Long id){
+        BoardDTO boardDTO = boardService.findById(id);
+        Map<String, Object> response = new HashMap<>();
+        if (boardDTO !=null){
+            response.put("board", boardDTO);
+            response.put("success", "게시글을 성공적으로 조회하였습니다.");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+        else{
+            response.put("fail", "해당 게시글이 없습니다");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
 }
