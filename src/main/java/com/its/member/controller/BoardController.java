@@ -71,6 +71,24 @@ public class BoardController {
         }
     }
 
+
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody BoardDTO boardDTO, @RequestHeader("Authorization") String token) {
+        String result = boardService.update(id, boardDTO, token);
+        Map<String, Object> response = new HashMap<>();
+        if (result.equals("성공적으로 게시글을 수정했습니다.")){
+            BoardDTO boardDTO1 = boardService.findById(id);
+            response.put("message", result);
+            response.put("board", boardDTO1);
+            return ResponseEntity.status(HttpStatus.OK).body( response);
+
+        }
+        else{
+            response.put("message", result);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id, @RequestHeader("Authorization") String token) {
         String result = boardService.delete(id, token);

@@ -90,4 +90,32 @@ public class BoardService {
         }
     }
 
+    public String update(Long id, BoardDTO boardDTO, String token) {
+        try {
+            token = token.split(" ")[1];
+            String email = JWToken.getEmail(token, secretKey);
+
+            Optional<BoardEntity> optionalBoardEntity = boardRepository.findById(id);
+            if (optionalBoardEntity.isPresent()) {
+                BoardEntity boardEntity = optionalBoardEntity.get();
+                if (email.equals(boardEntity.getEmail())) {
+                    boardEntity.setTitle(boardDTO.getTitle());
+                    boardEntity.setContent(boardDTO.getContent());
+
+                    boardRepository.save(boardEntity);
+                    return "성공적으로 게시글을 수정했습니다.";
+                } else {
+                    return "게시글 작성자만 수정할 수 있습니다.";
+                }
+            } else {
+                return "해당 ID의 게시글이 존재하지 않습니다.";
+            }
+        } catch (NoSuchElementException e) {
+            // NoSuchElementException 예외 처리
+            return "요청한 게시글 ID가 잘못되었습니다.";
+        } catch (Exception e) {
+            // 기타 예외 처리
+            return "예상치 못한 오류가 발생했습니다.";
+        }
+    }
 }
