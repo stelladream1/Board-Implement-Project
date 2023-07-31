@@ -6,6 +6,7 @@ import com.its.member.repository.BoardRepository;
 import com.its.member.tools.JWToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,5 +32,18 @@ public class BoardService {
         return BoardDTO.toBoardDTO(savedEntity);
 
 
+    }
+
+
+    public Page<BoardDTO> paging(Pageable pageable) {
+        int page = pageable.getPageNumber() - 1;
+        int pageLimit = 3; // 한 페이지에 보여줄 글 갯수
+
+        Page<BoardEntity> boardEntities =
+                boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+
+        // 목록: id, writer, title, hits, createdTime
+        Page<BoardDTO> boardDTOS = boardEntities.map(board -> new BoardDTO(board.getId(), board.getTitle(), board.getContent(),  board.getEmail()));
+        return boardDTOS;
     }
 }

@@ -4,14 +4,15 @@ package com.its.member.controller;
 import com.its.member.dto.BoardDTO;
 import com.its.member.service.BoardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,5 +40,21 @@ public class BoardController {
         }
     }
 
+
+    @GetMapping("/list")
+    public ResponseEntity<Map<String, Object>>List(@PageableDefault(page = 1) Pageable pageable){
+        Page<BoardDTO> boardList = boardService.paging(pageable);
+        Map<String, Object> responseData = new HashMap<>();
+
+        int blockLimit = 3;
+        int startPage = (((int)(Math.ceil((double)pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
+        int endPage = Math.min((startPage + blockLimit - 1), boardList.getTotalPages());
+
+        responseData.put("List", boardList);
+        responseData.put("startPage", startPage);
+        responseData.put("endPage", endPage);
+
+        return ResponseEntity.ok(responseData);
+    }
 
 }
