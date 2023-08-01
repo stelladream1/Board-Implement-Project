@@ -85,4 +85,71 @@ class BoardTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.fail").value("해당 게시글이 없습니다"));
     }
+
+
+    @DisplayName("게시글 수정 성공 테스트")
+    @Test
+    void updateSuccess() throws Exception {
+        String jsonRequest = "{\"title\":\"수정중입니다\",\"content\":\"수정중입니다\"}";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdCIsImlhdCI6MTY5MDg3MTY3MiwiZXhwIjoxNjkxMjMxNjcyfQ.iFSN2zPga__7NEPNQw3yB9-lyXD-CW55_yg_06a6hTs";
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/update/13")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest)
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("성공적으로 게시글을 수정했습니다."));
+
+    }
+
+    @DisplayName("게시글 수정 실패 테스트")
+    @Test
+    void updateFail() throws Exception {
+        String jsonRequest = "{\"title\":\"수정중입니다\",\"content\":\"수정중입니다\"}";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdCIsImlhdCI6MTY5MDg3MTY3MiwiZXhwIjoxNjkxMjMxNjcyfQ.iFSN2zPga__7NEPNQw3yB9-lyXD-CW55_yg_06a6hTs";
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/update/16")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest)
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("게시글 작성자만 수정할 수 있습니다."));
+
+    }
+
+
+    @DisplayName("게시글 삭제 성공 테스트")
+    @Test
+    void deleteSuccess() throws Exception {
+
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdCIsImlhdCI6MTY5MDg3MTY3MiwiZXhwIjoxNjkxMjMxNjcyfQ.iFSN2zPga__7NEPNQw3yB9-lyXD-CW55_yg_06a6hTs";
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/delete/13")
+                        .header("Authorization", token)
+
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("성공적으로 게시글을 삭제했습니다."));
+
+    }
+
+    @DisplayName("게시글 삭제 실패 테스트")
+    @Test
+    void deleteFail() throws Exception {
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdCIsImlhdCI6MTY5MDg3MTY3MiwiZXhwIjoxNjkxMjMxNjcyfQ.iFSN2zPga__7NEPNQw3yB9-lyXD-CW55_yg_06a6hTs";
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/delete/16")
+                        .header("Authorization", token)
+
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("게시글 작성자만 삭제할 수 있습니다."));
+
+    }
 }

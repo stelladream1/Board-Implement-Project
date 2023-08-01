@@ -105,7 +105,7 @@ public class BoardController {
             }
             else{
                 response.put("message", result);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
 
         }
@@ -129,7 +129,7 @@ public class BoardController {
                 return ResponseEntity.ok(response);
             } else {
                 response.put("message", result);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
         } catch (IllegalArgumentException e) {
             response.put("message", e.getMessage());
