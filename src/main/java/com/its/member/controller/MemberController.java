@@ -5,6 +5,7 @@ import com.its.member.dto.MemberDTO;
 import com.its.member.repository.MemberRepository;
 import com.its.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,19 +20,17 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class MemberController {
     private final MemberService memberService;
 
-
-
     @PostMapping("/join")
     public ResponseEntity<String> join(@RequestBody MemberDTO memberDTO){
         String message = memberService.join(memberDTO);
         try {
-            if (message.equals("회원가입이 성공적으로 완료됐습니다.")) {
+            if (message.equals("회원가입이 정상적으로 처리 되었습니다.")) {
                 return ResponseEntity.ok(message);
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
             }
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버에 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
         }
     }
 

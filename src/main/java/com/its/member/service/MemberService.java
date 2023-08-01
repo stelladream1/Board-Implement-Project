@@ -29,7 +29,7 @@ public class MemberService {
 
 
         if(!isValidEmail(memberDTO.getEmail())){
-            return "이메일 형식을 확인해주세요";
+            return "이메일 형식을 확인해주세요.";
         }
 
         else if(!isValidPassword(memberDTO.getPassword())){
