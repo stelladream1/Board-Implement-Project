@@ -29,7 +29,7 @@ public class BoardService {
             throw new IllegalArgumentException("게시글 내용을 입력해주세요.");
         }
         else if (boardDTO.getTitle() == null || boardDTO.getTitle().isEmpty()) {
-            throw new IllegalArgumentException("게시글 내용을 입력해주세요.");
+            throw new IllegalArgumentException("게시글 제목을 입력해주세요.");
         }
         BoardEntity boardEntity = BoardEntity.toboardEntity(boardDTO);
         BoardEntity savedEntity = boardRepository.save(boardEntity);
