@@ -37,8 +37,16 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody MemberDTO memberDTO){
-
-        return ResponseEntity.ok().body(memberService.login(memberDTO));
+        String message = memberService.login(memberDTO);
+        try {
+            if (message.equals("로그인 성공.")) {
+                return ResponseEntity.ok(message);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+            }
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+        }
     }
 
 
