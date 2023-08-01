@@ -13,6 +13,8 @@ public class MemberDTO {
     private String email;
     private String password;
 
+
+
     public static MemberDTO toMemberDTO(MemberEntity memberEntity){
         MemberDTO  memberDTO = new MemberDTO();
         memberDTO.setId(memberEntity.getId());

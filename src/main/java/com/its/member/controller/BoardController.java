@@ -32,7 +32,7 @@ public class BoardController {
             response.put("post", writeResult);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (IllegalArgumentException e) {
-            response.put("message", e.getMessage()); // The error message from IllegalArgumentException
+            response.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
             response.put("message", "게시글 등록에 실패했습니다");
@@ -43,61 +43,101 @@ public class BoardController {
 
     @GetMapping("/list")
     public ResponseEntity<Map<String, Object>> List(@PageableDefault(page = 1) Pageable pageable) {
-        Page<BoardDTO> boardList = boardService.paging(pageable);
-        Map<String, Object> responseData = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
+        try{
+            Page<BoardDTO> boardList = boardService.paging(pageable);
 
-        int blockLimit = 3;
-        int startPage = (((int) (Math.ceil((double) pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
-        int endPage = Math.min((startPage + blockLimit - 1), boardList.getTotalPages());
+            int blockLimit = 3;
+            int startPage = (((int) (Math.ceil((double) pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
+            int endPage = Math.min((startPage + blockLimit - 1), boardList.getTotalPages());
 
-        responseData.put("List", boardList);
-        responseData.put("startPage", startPage);
-        responseData.put("endPage", endPage);
+            response.put("List", boardList);
+            response.put("startPage", startPage);
+            response.put("endPage", endPage);
 
-        return ResponseEntity.ok(responseData);
+            return ResponseEntity.ok(response);
+
+        }
+        catch (Exception e){
+            response.put("message", "게시글 조회에 실패했습니다");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
     }
 
     @GetMapping("/list/{id}")
     public ResponseEntity<Map<String, Object>> findById(@PathVariable Long id) {
-        BoardDTO boardDTO = boardService.findById(id);
+
         Map<String, Object> response = new HashMap<>();
-        if (boardDTO != null) {
-            response.put("board", boardDTO);
-            response.put("success", "게시글을 성공적으로 조회하였습니다.");
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } else {
-            response.put("fail", "해당 게시글이 없습니다");
+        try {
+
+            BoardDTO boardDTO = boardService.findById(id);
+            if (boardDTO != null) {
+                response.put("board", boardDTO);
+                response.put("success", "게시글을 성공적으로 조회하였습니다.");
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+            } else {
+                response.put("fail", "해당 게시글이 없습니다");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+        }
+        catch (Exception e){
+            response.put("message", "게시글 조회에 실패했습니다");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+
     }
 
 
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody BoardDTO boardDTO, @RequestHeader("Authorization") String token) {
-        String result = boardService.update(id, boardDTO, token);
+
         Map<String, Object> response = new HashMap<>();
-        if (result.equals("성공적으로 게시글을 수정했습니다.")){
-            BoardDTO boardDTO1 = boardService.findById(id);
-            response.put("message", result);
-            response.put("board", boardDTO1);
-            return ResponseEntity.status(HttpStatus.OK).body( response);
+        try {
+            String result = boardService.update(id, boardDTO, token);
+            if (result.equals("성공적으로 게시글을 수정했습니다.")){
+                BoardDTO boardDTO1 = boardService.findById(id);
+                response.put("message", result);
+                response.put("board", boardDTO1);
+                return ResponseEntity.status(HttpStatus.OK).body( response);
+
+            }
+            else{
+                response.put("message", result);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
 
         }
-        else{
-            response.put("message", result);
+        catch (IllegalArgumentException e) {
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (Exception e) {
+            response.put("message", "게시글 수정에 실패했습니다");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+
+
     }
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id, @RequestHeader("Authorization") String token) {
-        String result = boardService.delete(id, token);
-        if (result.equals("성공적으록 게시글을 삭제했습니다.")) {
-            return ResponseEntity.ok(result);
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            String result = boardService.delete(id, token);
+            if (result.equals("성공적으로 게시글을 삭제했습니다.")) {
+                response.put("message", result);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("message", result);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+        } catch (IllegalArgumentException e) {
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (Exception e) {
+            response.put("message", "게시글 삭제에 실패했습니다");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-
     }
 
 }

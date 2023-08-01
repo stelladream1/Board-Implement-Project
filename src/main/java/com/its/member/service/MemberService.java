@@ -57,15 +57,21 @@ public class MemberService {
 
             Optional<MemberEntity> byEmail = memberRepository.findByEmail(memberDTO.getEmail());
             if (byEmail.isPresent()) {
-
-                String token = JWToken.createJWT(memberDTO.getEmail(), secretKey);
-
-                // Set the token in the MemberEntity and save it to the database
                 MemberEntity memberEntity = byEmail.get();
-                memberEntity.setJwtToken(token);
-                memberRepository.save(memberEntity);
+                String hashedPassword = memberEntity.getPassword();
+                if (BCrypt.checkpw(memberDTO.getPassword(), hashedPassword))
+                {
+                    String token = JWToken.createJWT(memberDTO.getEmail(), secretKey);
 
-                return token;
+                    memberEntity.setJwtToken(token);
+                    memberRepository.save(memberEntity);
+
+                    return token;
+                }
+                else{
+                    return "비밀번호가 일치하지 않습니다.";
+                }
+
             } else {
 
                 return "등록되지 않은 사용자입니다. ";
