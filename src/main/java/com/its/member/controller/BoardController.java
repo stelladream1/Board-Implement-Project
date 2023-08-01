@@ -78,7 +78,7 @@ public class BoardController {
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
                 response.put("fail", "해당 게시글이 없습니다");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
         }
         catch (Exception e){

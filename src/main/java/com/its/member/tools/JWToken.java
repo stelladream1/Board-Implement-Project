@@ -22,7 +22,7 @@ public class JWToken {
         Claims claims = Jwts.claims();
         claims.put("email", email);
 
-        long expirationMs = 3600000;
+        long expirationMs = 360000000;
         Date expirationDate = new Date(System.currentTimeMillis() + expirationMs);
         return Jwts.builder()
                 .setClaims(claims)

@@ -26,7 +26,7 @@ class BoardTest {
     @Test
     void postSuccess() throws Exception {
         String jsonRequest = "{\"title\":\"test중입니다\",\"content\":\"테스트중입니다\"}";
-        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdCIsImlhdCI6MTY5MDg2NTU1OSwiZXhwIjoxNjkwODY5MTU5fQ.cGIsaPs0PPrHogaYIjaewMmKgnCnGNlV8sGdTFYhBkw";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdCIsImlhdCI6MTY5MDg3MTY3MiwiZXhwIjoxNjkxMjMxNjcyfQ.iFSN2zPga__7NEPNQw3yB9-lyXD-CW55_yg_06a6hTs";
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/post")
                         .header("Authorization", token)
@@ -55,5 +55,34 @@ class BoardTest {
 
     }
 
+    @DisplayName("게시글 목록 테스트")
+    @Test
+    void listSuccess() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/list")
+                .param("page", "1")
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
 
+
+    @DisplayName("특정 게시글 목록 테스트 성공")
+    @Test
+    void findByIdSuccess() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/list/13")
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success").value("게시글을 성공적으로 조회하였습니다."));
+    }
+
+    @DisplayName("특정 게시글 목록 테스트 실패")
+    @Test
+    void findByIdFail() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/list/100")
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fail").value("해당 게시글이 없습니다"));
+    }
 }
