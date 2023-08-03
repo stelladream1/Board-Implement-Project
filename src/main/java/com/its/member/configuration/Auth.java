@@ -32,7 +32,7 @@ public class Auth{
                 .cors().and()
                 .authorizeHttpRequests()
                 .antMatchers("/api/join", "/api/login").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/post").authenticated()
+                .antMatchers(HttpMethod.POST,"/api/board/**").authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

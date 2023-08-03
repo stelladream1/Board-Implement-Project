@@ -23,6 +23,7 @@ public class MemberController {
     @PostMapping("/join")
     public ResponseEntity<String> join(@RequestBody MemberDTO memberDTO){
         String message = memberService.join(memberDTO);
+        System.out.println(message);
         try {
             if (message.equals("회원가입이 정상적으로 처리 되었습니다.")) {
                 return ResponseEntity.ok(message);

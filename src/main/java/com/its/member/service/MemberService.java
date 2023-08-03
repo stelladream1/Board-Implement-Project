@@ -5,6 +5,7 @@ import com.its.member.entity.MemberEntity;
 import com.its.member.repository.MemberRepository;
 import com.its.member.tools.JWToken;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class MemberService {
     }
 
 
-    public String join(MemberDTO memberDTO){
+    public String join( MemberDTO memberDTO){
 
 
         if(!isValidEmail(memberDTO.getEmail())){
