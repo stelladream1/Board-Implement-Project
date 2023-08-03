@@ -1,5 +1,6 @@
 package com.its.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.its.member.entity.MemberEntity;
 import lombok.*;
 
@@ -11,6 +12,8 @@ import lombok.*;
 public class MemberDTO {
     private Long id;
     private String email;
+
+    @JsonIgnore
     private String password;
 
 
@@ -19,7 +22,6 @@ public class MemberDTO {
         MemberDTO  memberDTO = new MemberDTO();
         memberDTO.setId(memberEntity.getId());
         memberDTO.setEmail(memberEntity.getEmail());
-        memberDTO.setPassword(memberEntity.getPassword());
 
         return memberDTO;
     }

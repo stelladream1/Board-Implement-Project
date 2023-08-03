@@ -2,7 +2,9 @@ package com.its.member.service;
 
 import com.its.member.dto.BoardDTO;
 import com.its.member.entity.BoardEntity;
+import com.its.member.entity.MemberEntity;
 import com.its.member.repository.BoardRepository;
+import com.its.member.repository.MemberRepository;
 import com.its.member.tools.JWToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,13 +19,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
-
+    private final MemberRepository memberRepository;
     @Value("${jwt.secret}")
     private String secretKey;
     public BoardDTO write(BoardDTO boardDTO, String token) {
         token = token.split(" ")[1];
         String email = JWToken.getEmail(token, secretKey);
-        boardDTO.setEmail(email);
+
 
         if (boardDTO.getContent() == null || boardDTO.getContent().isEmpty()) {
             throw new IllegalArgumentException("게시글 내용을 입력해주세요.");
@@ -31,7 +33,10 @@ public class BoardService {
         else if (boardDTO.getTitle() == null || boardDTO.getTitle().isEmpty()) {
             throw new IllegalArgumentException("게시글 제목을 입력해주세요.");
         }
-        BoardEntity boardEntity = BoardEntity.toboardEntity(boardDTO);
+
+        MemberEntity memberEntity = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다."));
+        BoardEntity boardEntity = BoardEntity.toboardEntity(boardDTO, memberEntity);
         BoardEntity savedEntity = boardRepository.save(boardEntity);
         return BoardDTO.toBoardDTO(savedEntity);
 
@@ -46,7 +51,7 @@ public class BoardService {
         Page<BoardEntity> boardEntities =
                 boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
 
-        Page<BoardDTO> boardDTOS = boardEntities.map(board -> new BoardDTO(board.getId(), board.getTitle(), board.getContent(),  board.getEmail()));
+        Page<BoardDTO> boardDTOS = boardEntities.map(board -> new BoardDTO(board.getId(), board.getTitle(), board.getContent(), board.getMember().getEmail()));
         return boardDTOS;
     }
 
@@ -71,7 +76,7 @@ public class BoardService {
             Optional<BoardEntity> optionalBoardEntity = boardRepository.findById(id);
             if (optionalBoardEntity.isPresent()) {
                 BoardEntity boardEntity = optionalBoardEntity.get();
-                if (email.equals(boardEntity.getEmail())) {
+                if (email.equals(boardEntity.getMember().getEmail())) {
                     boardRepository.deleteById(id);
                     return "성공적으로 게시글을 삭제했습니다.";
                 } else {
@@ -97,7 +102,7 @@ public class BoardService {
             Optional<BoardEntity> optionalBoardEntity = boardRepository.findById(id);
             if (optionalBoardEntity.isPresent()) {
                 BoardEntity boardEntity = optionalBoardEntity.get();
-                if (email.equals(boardEntity.getEmail())) {
+                if (email.equals(boardEntity.getMember().getEmail())) {
                     boardEntity.setTitle(boardDTO.getTitle());
                     boardEntity.setContent(boardDTO.getContent());
 

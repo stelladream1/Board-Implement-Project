@@ -2,6 +2,7 @@ package com.its.member.entity;
 
 
 import com.its.member.dto.BoardDTO;
+import com.its.member.dto.MemberDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,23 +18,26 @@ public class BoardEntity {
     @Column(name = "board_id")
     private Long id;
 
-    @Column(name = "board_title")
+    @Column(name = "board_title", nullable = false)
     private String title;
 
-    @Column(name = "board_content")
+    @Column(name = "board_content",  nullable = false, length = 1024)
     private String content;
 
-    @Column
-    private String email;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user")
+    private MemberEntity member;
 
-    public static BoardEntity toboardEntity(BoardDTO boardDTO){
+    public static BoardEntity toboardEntity(BoardDTO boardDTO, MemberEntity memberEntity){
         BoardEntity boardEntity = new BoardEntity();
         boardEntity.setTitle(boardDTO.getTitle());
         boardEntity.setContent(boardDTO.getContent());
-        boardEntity.setEmail(boardDTO.getEmail());
+        boardEntity.setMember(memberEntity);
 
         return boardEntity;
     }
+
+
 
 
 }
