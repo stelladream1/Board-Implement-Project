@@ -17,13 +17,13 @@ public class BoardEntity {
     @Column(name = "board_id")
     private Long id;
 
-    @Column(name = "board_title", nullable = false)
+    @Column(name = "board_title")
     private String title;
 
-    @Column(name = "board_content",  nullable = false, length = 1024)
+    @Column(name = "board_content")
     private String content;
 
-    @Column(nullable = false)
+    @Column
     private String email;
 
     public static BoardEntity toboardEntity(BoardDTO boardDTO){

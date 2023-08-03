@@ -16,10 +16,10 @@ public class MemberEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_email", nullable = false)
+    @Column(name = "user_email")
     private String email;
 
-    @Column(name= "user_password", nullable = false)
+    @Column(name= "user_password")
     private String password;
 
 
