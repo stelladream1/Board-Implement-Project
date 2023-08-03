@@ -39,7 +39,7 @@ public class MemberController {
     public ResponseEntity<String> login(@RequestBody MemberDTO memberDTO){
         String message = memberService.login(memberDTO);
         try {
-            if (message.equals("로그인 성공.")) {
+            if (message.length()>=20) {
                 return ResponseEntity.ok(message);
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);

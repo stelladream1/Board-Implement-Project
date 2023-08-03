@@ -26,7 +26,7 @@ class BoardTest {
     @Test
     void postSuccess() throws Exception {
         String jsonRequest = "{\"title\":\"test중입니다\",\"content\":\"테스트중입니다\"}";
-        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdCIsImlhdCI6MTY5MDg3MTY3MiwiZXhwIjoxNjkxMjMxNjcyfQ.iFSN2zPga__7NEPNQw3yB9-lyXD-CW55_yg_06a6hTs";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3R1c2VyQHRlc3QiLCJpYXQiOjE2OTEwMjUwNzMsImV4cCI6MTY5MTM4NTA3M30.5szQKK_VZaFo-J9BBFjA2DeBuoh-DXiujG2luUZvZnI";
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/post")
                         .header("Authorization", token)
@@ -42,7 +42,7 @@ class BoardTest {
     @Test
     void postFail() throws Exception {
         String jsonRequest = "{\"content\":\"테스트중입니다\"}";
-        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdCIsImlhdCI6MTY5MDg2NTU1OSwiZXhwIjoxNjkwODY5MTU5fQ.cGIsaPs0PPrHogaYIjaewMmKgnCnGNlV8sGdTFYhBkw";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3R1c2VyQHRlc3QiLCJpYXQiOjE2OTEwMjUwNzMsImV4cCI6MTY5MTM4NTA3M30.5szQKK_VZaFo-J9BBFjA2DeBuoh-DXiujG2luUZvZnI";
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/post")
                         .header("Authorization", token)
@@ -69,7 +69,7 @@ class BoardTest {
     @DisplayName("특정 게시글 목록 테스트 성공")
     @Test
     void findByIdSuccess() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/list/13")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/list/2")
                 )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -91,9 +91,9 @@ class BoardTest {
     @Test
     void updateSuccess() throws Exception {
         String jsonRequest = "{\"title\":\"수정중입니다\",\"content\":\"수정중입니다\"}";
-        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdCIsImlhdCI6MTY5MDg3MTY3MiwiZXhwIjoxNjkxMjMxNjcyfQ.iFSN2zPga__7NEPNQw3yB9-lyXD-CW55_yg_06a6hTs";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3R1c2VyQHRlc3QiLCJpYXQiOjE2OTEwMjUwNzMsImV4cCI6MTY5MTM4NTA3M30.5szQKK_VZaFo-J9BBFjA2DeBuoh-DXiujG2luUZvZnI";
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/update/13")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/update/2")
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest)
@@ -108,9 +108,9 @@ class BoardTest {
     @Test
     void updateFail() throws Exception {
         String jsonRequest = "{\"title\":\"수정중입니다\",\"content\":\"수정중입니다\"}";
-        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdCIsImlhdCI6MTY5MDg3MTY3MiwiZXhwIjoxNjkxMjMxNjcyfQ.iFSN2zPga__7NEPNQw3yB9-lyXD-CW55_yg_06a6hTs";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3R1c2VyQHRlc3QiLCJpYXQiOjE2OTEwMjUwNzMsImV4cCI6MTY5MTM4NTA3M30.5szQKK_VZaFo-J9BBFjA2DeBuoh-DXiujG2luUZvZnI";
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/update/16")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/update/1")
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest)
@@ -126,9 +126,9 @@ class BoardTest {
     @Test
     void deleteSuccess() throws Exception {
 
-        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdCIsImlhdCI6MTY5MDg3MTY3MiwiZXhwIjoxNjkxMjMxNjcyfQ.iFSN2zPga__7NEPNQw3yB9-lyXD-CW55_yg_06a6hTs";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3R1c2VyQHRlc3QiLCJpYXQiOjE2OTEwMjUwNzMsImV4cCI6MTY5MTM4NTA3M30.5szQKK_VZaFo-J9BBFjA2DeBuoh-DXiujG2luUZvZnI";
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/delete/13")
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/delete/2")
                         .header("Authorization", token)
 
                 )
@@ -141,9 +141,9 @@ class BoardTest {
     @DisplayName("게시글 삭제 실패 테스트")
     @Test
     void deleteFail() throws Exception {
-        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAdGVzdCIsImlhdCI6MTY5MDg3MTY3MiwiZXhwIjoxNjkxMjMxNjcyfQ.iFSN2zPga__7NEPNQw3yB9-lyXD-CW55_yg_06a6hTs";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3R1c2VyQHRlc3QiLCJpYXQiOjE2OTEwMjUwNzMsImV4cCI6MTY5MTM4NTA3M30.5szQKK_VZaFo-J9BBFjA2DeBuoh-DXiujG2luUZvZnI";
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/delete/16")
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/delete/1")
                         .header("Authorization", token)
 
                 )

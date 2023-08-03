@@ -6,10 +6,10 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-    url: jdbc:mysql://localhost:3306/wanted?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://springboot-db.cdiuvoo5acyh.ap-northeast-2.rds.amazonaws.com:3306/my_springboot_db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
 
-    username: root
-    password: root
+    username: admin
+    password: ysso2805
 
   jpa:
       database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
