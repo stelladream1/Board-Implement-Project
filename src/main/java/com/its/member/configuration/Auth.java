@@ -31,7 +31,7 @@ public class Auth{
                 .csrf().disable()
                 .cors().and()
                 .authorizeHttpRequests()
-                .antMatchers("/api/join", "/api/login").permitAll()
+                .antMatchers("/api/user/**", "/api/board/list", "/api/board/list/{id}").permitAll()
                 .antMatchers(HttpMethod.POST,"/api/board/**").authenticated()
                 .and()
                 .sessionManagement()

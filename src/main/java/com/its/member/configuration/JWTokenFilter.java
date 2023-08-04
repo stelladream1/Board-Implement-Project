@@ -2,6 +2,7 @@ package com.its.member.configuration;
 
 import com.its.member.service.MemberService;
 import com.its.member.tools.JWToken;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -31,9 +32,9 @@ public class JWTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        log.info("authorization :{}",authorization );
+        log.info("authorization :{}", authorization);
 
-        if(authorization ==null || !authorization.startsWith("Bearer ")){
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
             log.error("authorization을 잘못보냈습니다");
             filterChain.doFilter(request, response);
             return;
@@ -41,21 +42,30 @@ public class JWTokenFilter extends OncePerRequestFilter {
 
         String token = authorization.split(" ")[1];
 
-        //토큰 만료 여부
-        if(JWToken.isExpired(token, secretKey)){
-            log.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
-            System.out.println("토큰이 만료되었습니다. 다시 로그인 해주세요");
+        try {
+
+            //토큰 만료 여부
+//        if(JWToken.isExpired(token, secretKey)){
+//            log.error("토큰이 만료되었습니다. 다시 로그인 해주세요");
+//            System.out.println("토큰이 만료되었습니다. 다시 로그인 해주세요");
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+
+            String Email = JWToken.getEmail(token, secretKey);
+            log.info(Email);
+
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(Email, null, List.of(new SimpleGrantedAuthority("USER")));
+
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             filterChain.doFilter(request, response);
-            return;
         }
-
-        String Email = JWToken.getEmail(token, secretKey);
-        log.info(Email);
-
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(Email, null, List.of(new SimpleGrantedAuthority("USER")));
-
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        filterChain.doFilter(request, response);
+        catch (SignatureException e) {
+            // Handle other SignatureException (if any)
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("유효하지 않은 JWT 서명입니다. 인증에 실패했습니다.");
+        }
     }
 }

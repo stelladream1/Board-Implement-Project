@@ -1,11 +1,11 @@
 package com.its.member.service;
 
+import com.its.member.controller.CustomExceptionHandler;
 import com.its.member.dto.MemberDTO;
 import com.its.member.entity.MemberEntity;
 import com.its.member.repository.MemberRepository;
 import com.its.member.tools.JWToken;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,11 +30,11 @@ public class MemberService {
 
 
         if(!isValidEmail(memberDTO.getEmail())){
-            return "이메일 형식을 확인해주세요.";
+            throw new IllegalArgumentException("이메일 형식을 확인해주세요.");
         }
 
         else if(!isValidPassword(memberDTO.getPassword())){
-            return "비밀번호는 8자리 이상이어야 합니다.";
+            throw new IllegalArgumentException("비밀번호는 8자리 이상이어야 합니다.");
         }
 
         else{
@@ -51,10 +51,15 @@ public class MemberService {
     @Value("${jwt.secret}")
     private String secretKey;
     public String login(MemberDTO memberDTO) {
-        if (!isValidEmail(memberDTO.getEmail()) || !isValidPassword(memberDTO.getPassword())) {
+        if(!isValidEmail(memberDTO.getEmail())){
+            throw new IllegalArgumentException("이메일 형식을 확인해주세요.");
+        }
 
-            return "로그인 정보를 다시 확인해주세요.";
-        } else {
+        else if(!isValidPassword(memberDTO.getPassword())){
+            throw new IllegalArgumentException("비밀번호는 8자리 이상이어야 합니다.");
+        }
+
+        else {
 
             Optional<MemberEntity> byEmail = memberRepository.findByEmail(memberDTO.getEmail());
             if (byEmail.isPresent()) {
@@ -70,12 +75,12 @@ public class MemberService {
                     return token;
                 }
                 else{
-                    return "비밀번호가 일치하지 않습니다.";
+                    throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
                 }
 
             } else {
 
-                return "등록되지 않은 사용자입니다. ";
+                throw new CustomExceptionHandler.UserNotRegister("등록된 유저가 아닙니다.");
             }
         }
     }

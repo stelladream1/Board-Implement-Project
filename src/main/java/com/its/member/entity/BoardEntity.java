@@ -25,7 +25,7 @@ public class BoardEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user_id")
     private MemberEntity member;
 
     public static BoardEntity toboardEntity(BoardDTO boardDTO, MemberEntity memberEntity){

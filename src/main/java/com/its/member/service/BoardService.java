@@ -7,11 +7,14 @@ import com.its.member.repository.BoardRepository;
 import com.its.member.repository.MemberRepository;
 import com.its.member.tools.JWToken;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.security.SignatureException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -22,10 +25,12 @@ public class BoardService {
     private final MemberRepository memberRepository;
     @Value("${jwt.secret}")
     private String secretKey;
-    public BoardDTO write(BoardDTO boardDTO, String token) {
-        token = token.split(" ")[1];
-        String email = JWToken.getEmail(token, secretKey);
+    public BoardDTO write(BoardDTO boardDTO, String token) throws Exception {
 
+
+        token = token.split(" ")[1];
+        String email;
+        email = JWToken.getEmail(token, secretKey);
 
         if (boardDTO.getContent() == null || boardDTO.getContent().isEmpty()) {
             throw new IllegalArgumentException("게시글 내용을 입력해주세요.");
@@ -35,7 +40,7 @@ public class BoardService {
         }
 
         MemberEntity memberEntity = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new AccessDeniedException("해당 이메일의 사용자가 존재하지 않습니다."));
         BoardEntity boardEntity = BoardEntity.toboardEntity(boardDTO, memberEntity);
         BoardEntity savedEntity = boardRepository.save(boardEntity);
         return BoardDTO.toBoardDTO(savedEntity);
@@ -52,7 +57,14 @@ public class BoardService {
                 boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
 
         Page<BoardDTO> boardDTOS = boardEntities.map(board -> new BoardDTO(board.getId(), board.getTitle(), board.getContent(), board.getMember().getEmail()));
-        return boardDTOS;
+
+        if(boardDTOS.hasContent()){
+
+            return boardDTOS;
+        }
+        else{
+            throw new NoSuchElementException("글 목록이 존재하지 않습니다.");
+        }
     }
 
     @Transactional

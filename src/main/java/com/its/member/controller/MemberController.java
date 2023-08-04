@@ -16,40 +16,44 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public ResponseEntity<String> join(@RequestBody MemberDTO memberDTO){
+    public ResponseEntity<String> join(@RequestBody MemberDTO memberDTO) {
+
+        if (memberDTO.getEmail() == null || memberDTO.getPassword() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 또는 비밀번호를 입력해주세요.");
+        }
         String message = memberService.join(memberDTO);
-        System.out.println(message);
+
         try {
-            if (message.equals("회원가입이 정상적으로 처리 되었습니다.")) {
-                return ResponseEntity.ok(message);
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
-            }
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+            return ResponseEntity.status(HttpStatus.CREATED).body(message);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예상치 못한 오류로 회원가입을 실패했습니다.");
         }
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody MemberDTO memberDTO){
-        String message = memberService.login(memberDTO);
+    public ResponseEntity<String> login(@RequestBody MemberDTO memberDTO) {
+
         try {
-            if (message.length()>=20) {
-                return ResponseEntity.ok(message);
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
-            }
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+            String message = memberService.login(memberDTO);
+            return ResponseEntity.ok(message);
+
+        }  catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }catch (CustomExceptionHandler.UserNotRegister e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+            catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예상치 못한 오류로 로그인을 실패했습니다.");
         }
     }
-
 
 
 }

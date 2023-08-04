@@ -6,10 +6,10 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-    url: jdbc:mysql://springboot-db.cdiuvoo5acyh.ap-northeast-2.rds.amazonaws.com:3306/my_springboot_db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url:
 
-    username: admin
-    password: ysso2805
+    username:
+    password:
 
   jpa:
       database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -19,4 +19,4 @@ spring:
         ddl-auto: update
 
 jwt:
-  secret: WantedPreOnboardingBackendInternshipWantedPreOnboardingBackendInternship
+  secret: 

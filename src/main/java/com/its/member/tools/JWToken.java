@@ -3,19 +3,28 @@ package com.its.member.tools;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.SignatureException;
 
 import java.util.Date;
 
 public class JWToken {
 
 
-    public static  String getEmail(String token, String secretKey){
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
-                .getBody().get("email",String.class);
+    public static  String getEmail(String token, String secretKey) throws SignatureException{
+
+            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
+                    .getBody().get("email",String.class);
+
     }
     public static boolean isExpired(String token, String secretKey){
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
-                        .getBody().getExpiration().before(new Date());
+        try {
+            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
+                    .getBody().getExpiration().before(new Date());
+        }
+
+        catch (SignatureException e){
+            return false;
+        }
     }
 
     public static String createJWT(String email, String secretKey){
