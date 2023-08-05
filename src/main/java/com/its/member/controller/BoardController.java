@@ -95,11 +95,11 @@ public class BoardController {
                 response.put("message", "CODE 200: 게시글을 성공적으로 조회하였습니다.");
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
-                response.put("message", "해당 게시글이 없습니다");
+                response.put("message", "ERROR 404: 해당 게시글이 없습니다");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
         } catch (Exception e) {
-            response.put("message", "예상치 못한 오류로 게시글 조회에 실패했습니다");
+            response.put("message", "ERROR 500: 예상치 못한 오류로 게시글 조회에 실패했습니다");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 

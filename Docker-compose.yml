@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  database:
+    container_name: mysql_db
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: my_springboot_db
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD:
+      TZ: 'Asia/Seoul'
+    ports:
+      - "4000:3306"
+
+    command:
+      - "mysqld"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    networks:
+      - test_network
+  application:
+    container_name: docker-compose-test
+    image: thedarknight2008/springbootwebapp:latest
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL:
+      SPRING_DATASOURCE_USERNAME: 
+      SPRING_DATASOURCE_PASSWORD:
+
+    networks:
+      - test_network
+
+
+networks:
+  test_network:
