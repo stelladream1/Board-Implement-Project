@@ -90,7 +90,7 @@ public class BoardService {
                 boardRepository.deleteById(id);
                 return "CODE 200: 성공적으로 게시글을 삭제했습니다.";
             } else {
-                throw new AccessDeniedException("ERROR 403: 글 작성자만 수정할 수 있습니다.");
+                throw new AccessDeniedException("ERROR 403: 글 작성자만 삭제할 수 있습니다.");
             }
         } else {
             throw new NoSuchElementException("ERROR 404: 해당 ID의 게시글이 존재하지 않습니다.");

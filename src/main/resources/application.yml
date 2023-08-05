@@ -9,7 +9,7 @@ spring:
     url:
 
     username:
-    password:
+    password: 
 
   jpa:
       database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -19,4 +19,4 @@ spring:
         ddl-auto: update
 
 jwt:
-  secret: 
+  secret: WantedPreOnboardingBackendInternshipWantedPreOnboardingBackendInternship

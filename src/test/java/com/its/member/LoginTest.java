@@ -18,7 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @AutoConfigureMockMvc
 class LoginTest {
 
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -27,60 +26,53 @@ class LoginTest {
     void LoginSuccess() throws Exception {
         String jsonRequest = "{\"email\":\"testuser@test\",\"password\":\"12341234\"}";
 
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/login") // Corrected the endpoint URL
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest)
                 )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
-
     }
+
     @DisplayName("로그인시 이메일 검증 테스트")
     @Test
     void loginIsValidEmail() throws Exception {
         String jsonRequest = "{\"email\":\"testuser\",\"password\":\"12341234\"}";
 
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/login") // Corrected the endpoint URL
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest)
                 )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("로그인 정보를 다시 확인해주세요."));
-
+                .andExpect(MockMvcResultMatchers.content().string("ERROR 400: 이메일 형식을 확인해주세요."));
     }
+
     @DisplayName("로그인시 비밀번호 검증 테스트")
     @Test
     void loginIsValidPassword() throws Exception {
         String jsonRequest = "{\"email\":\"testuser@test\",\"password\":\"1234\"}";
 
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/login") // Corrected the endpoint URL
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest)
                 )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("로그인 정보를 다시 확인해주세요."));
-
+                .andExpect(MockMvcResultMatchers.content().string("ERROR 400: 비밀번호는 8자리 이상이어야 합니다."));
     }
-
 
     @DisplayName("로그인시 비밀번호 불일치 테스트")
     @Test
     void loginIsWrongPassword() throws Exception {
         String jsonRequest = "{\"email\":\"testuser@test\",\"password\":\"123412341\"}";
 
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/user/login") // Corrected the endpoint URL
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest)
                 )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("비밀번호가 일치하지 않습니다."));
-
+                .andExpect(MockMvcResultMatchers.content().string("ERROR 400: 비밀번호가 일치하지 않습니다."));
     }
 }
