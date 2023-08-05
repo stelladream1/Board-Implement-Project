@@ -104,7 +104,7 @@
 
 
 ## *6. API 명세(request/response 포함)*
-
+[API 명세서](https://documenter.getpostman.com/view/27435050/2s9Xxwwts8#509c06c2-3965-4cf9-9e30-7538be99e49f)
 ### 1. 회원가입
 > Request
 ```
@@ -185,7 +185,7 @@ Body
 ### 4. 게시글 조회
 > Request
 ```
-POST  http://15.164.50.0:8080/api/board/list?page={pageNum}
+GET  http://15.164.50.0:8080/api/board/list?page={pageNum}
 ```
 > Response
 ```
@@ -218,7 +218,7 @@ POST  http://15.164.50.0:8080/api/board/list?page={pageNum}
 ### 5. 특정 게시글 조회
 > Request
 ```
-POST  http://15.164.50.0:8080/api/board/list/{id}
+GET  http://15.164.50.0:8080/api/board/list/{id}
 ```
 > Response
 ```
@@ -240,7 +240,7 @@ POST  http://15.164.50.0:8080/api/board/list/{id}
 ### 6. 특정 게시글 수정
 > Request
 ```
-POST  http://15.164.50.0:8080/api/board/update/{id}
+PUT  http://15.164.50.0:8080/api/board/update/{id}
 
 Headers
    {
@@ -275,7 +275,7 @@ Body
 ### 7. 특정 게시글 삭제 
 > Request
 ```
-POST  http://15.164.50.0:8080/api/board/delete/{id}
+DELETE  http://15.164.50.0:8080/api/board/delete/{id}
 
 Headers
    {
