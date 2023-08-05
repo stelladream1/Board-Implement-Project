@@ -66,7 +66,9 @@ public class BoardController {
             int startPage = (((int) (Math.ceil((double) pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
             int endPage = Math.min((startPage + blockLimit - 1), boardList.getTotalPages());
             response.put("message", "CODE 200: 성공적으로 글 목록을 조회했습니다.");
-            response.put("List", boardList);
+            response.put("List", boardList.getContent());
+
+            response.put("pageNumber", pageable.getPageNumber());
             response.put("startPage", startPage);
             response.put("endPage", endPage);
             return ResponseEntity.ok(response);
