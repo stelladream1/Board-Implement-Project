@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import io.jsonwebtoken.security.SignatureException;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -30,29 +31,26 @@ public class BoardController {
     public ResponseEntity<Map<String, Object>> post(@RequestBody BoardDTO boardDTO, @RequestHeader("Authorization") String token) {
         Map<String, Object> response = new HashMap<>();
         if (token == null) {
-            response.put("message", "인증되지 않은 요청입니다.");
+            response.put("message", "ERROR 403: 인증되지 않은 요청입니다.");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
         try {
             BoardDTO writeResult = boardService.write(boardDTO, token);
-            response.put("message", "게시글이 성공적으로 등록되었습니다");
+            response.put("message", "CODE 201: 게시글이 성공적으로 등록되었습니다");
             response.put("post", writeResult);
             return ResponseEntity.status(HttpStatus.OK).body(response);
 
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             response.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 
 
-        }
-        catch (AccessDeniedException e) {
+        } catch (AccessDeniedException e) {
             response.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
-        catch (Exception e) {
-            response.put("message", "예상치 못한 오류로 게시글 작성을 실패했습니다.");
+        } catch (Exception e) {
+            response.put("message", "ERROR 500: 예상치 못한 오류로 게시글 작성을 실패했습니다.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -61,24 +59,23 @@ public class BoardController {
     @GetMapping("/list")
     public ResponseEntity<Map<String, Object>> List(@PageableDefault(page = 1) Pageable pageable) {
         Map<String, Object> response = new HashMap<>();
-        try{
+        try {
             Page<BoardDTO> boardList = boardService.paging(pageable);
 
             int blockLimit = 3;
             int startPage = (((int) (Math.ceil((double) pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
             int endPage = Math.min((startPage + blockLimit - 1), boardList.getTotalPages());
-            response.put("message", "성공적으로 글 목록을 조회했습니다.");
+            response.put("message", "CODE 200: 성공적으로 글 목록을 조회했습니다.");
             response.put("List", boardList);
             response.put("startPage", startPage);
             response.put("endPage", endPage);
             return ResponseEntity.ok(response);
 
-        } catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             response.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-        catch (Exception e){
-            response.put("message", "예상치 못한 오류로 게시글 조회에 실패했습니다");
+        } catch (Exception e) {
+            response.put("message", "ERROR 500: 예상치 못한 오류로 게시글 조회에 실패했습니다");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
@@ -93,14 +90,13 @@ public class BoardController {
             BoardDTO boardDTO = boardService.findById(id);
             if (boardDTO != null) {
                 response.put("board", boardDTO);
-                response.put("message", "게시글을 성공적으로 조회하였습니다.");
+                response.put("message", "CODE 200: 게시글을 성공적으로 조회하였습니다.");
                 return ResponseEntity.status(HttpStatus.OK).body(response);
             } else {
                 response.put("message", "해당 게시글이 없습니다");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             response.put("message", "예상치 못한 오류로 게시글 조회에 실패했습니다");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -108,56 +104,62 @@ public class BoardController {
     }
 
 
-
     @PutMapping("/update/{id}")
     public ResponseEntity<Map<String, Object>> update(@PathVariable Long id, @RequestBody BoardDTO boardDTO, @RequestHeader("Authorization") String token) {
-
         Map<String, Object> response = new HashMap<>();
+        if (token == null) {
+            response.put("message", "ERROR 403: 인증되지 않은 요청입니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+
         try {
             String result = boardService.update(id, boardDTO, token);
-            if (result.equals("성공적으로 게시글을 수정했습니다.")){
-                BoardDTO boardDTO1 = boardService.findById(id);
-                response.put("message", result);
-                response.put("board", boardDTO1);
-                return ResponseEntity.status(HttpStatus.OK).body( response);
+            BoardDTO boardDTO1 = boardService.findById(id);
+            response.put("message", result);
+            response.put("board", boardDTO1);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
 
-            }
-            else{
-                response.put("message", result);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
 
-        }
-        catch (IllegalArgumentException e) {
+        } catch (AccessDeniedException e) {
             response.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+        catch (NoSuchElementException e) {
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 
         } catch (Exception e) {
-            response.put("message", "예상치 못한 오류로 게시글 수정에 실패했습니다");
+            response.put("message", "ERROR 500: 예상치 못한 오류로 게시글 수정에 실패했습니다");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
 
     }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Long id, @RequestHeader("Authorization") String token) {
         Map<String, Object> response = new HashMap<>();
+        if (token == null) {
+            response.put("message", "ERROR 403: 인증되지 않은 요청입니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
         try {
             String result = boardService.delete(id, token);
-            if (result.equals("성공적으로 게시글을 삭제했습니다.")) {
-                response.put("message", result);
-                return ResponseEntity.ok(response);
-            } else {
-                response.put("message", result);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
-        } catch (IllegalArgumentException e) {
+            response.put("message", result);
+            return ResponseEntity.ok(response);
+        } catch (NoSuchElementException e) {
             response.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        } catch (Exception e) {
-            response.put("message", "예상치 못한 오류로 게시글 삭제에 실패했습니다");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+
+        } catch (AccessDeniedException e) {
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+        catch (Exception e) {
+            response.put("message", "ERROR 500: 예상치 못한 오류로 게시글 삭제에 실패했습니다");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+
     }
 
 }

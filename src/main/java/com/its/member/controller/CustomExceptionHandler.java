@@ -21,6 +21,5 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         }
     }
 
-    // Exception handling logic
-    // ...
+
 }

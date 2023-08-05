@@ -65,7 +65,7 @@ public class JWTokenFilter extends OncePerRequestFilter {
             // Handle other SignatureException (if any)
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setCharacterEncoding("UTF-8");
-            response.getWriter().write("유효하지 않은 JWT 서명입니다. 인증에 실패했습니다.");
+            response.getWriter().write("ERROR 401: 유효하지 않은 JWT 서명입니다. 인증에 실패했습니다.");
         }
     }
 }
