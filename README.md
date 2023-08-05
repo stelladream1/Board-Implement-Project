@@ -1,5 +1,14 @@
 # wanted-pre-onboarding-backend
 
+## 목차   
+
+1. [지원자의 성명](#1-지원자의-성명)
+2. [애플리케이션의 실행 방법(엔드포인트 호출 방법 포함)](#2-애플리케이션의-실행-방법엔드포인트-호출-방법-포함)
+3. [데이터베이스 테이블 구조](#3-데이터베이스-테이블-구조)
+4. [구현한 API의 동작을 촬영한 데모 영상 링크](#4-구현한-api의-동작을-촬영한-데모-영상-링크)
+5. [구현 방법 및 이유에 대한 간략한 설명](#5-구현-방법-및-이유에-대한-간략한-설명)
+6. [API 명세(request/response 포함)](#6-api-명세requestresponse-포함)        
+7. [가산점 추가 요구사항](#7-가산점-추가-요구사항)
 ## *1. 지원자의 성명*
 
 안녕하세요 원티드 프리온보딩 8기 지원자 김현 입니다. 
@@ -13,7 +22,7 @@
 1. 깃허브에서 프로젝트를 다운로드 합니다.  
    `git clone https://github.com/stelladream1/wanted-pre-onboarding-backend.git`
 
-2. 데이터베이스와 연결하기 위한 환경 변수를 _**application.yml**_ 파일에서 설정합니다.
+2.  _**application.yml**_ 파일에서 데이터베이스와 연결하기 위한 환경 변수를 설정합니다.
 
    ```
    server:
@@ -40,13 +49,52 @@
       secret: <JWT를 생성하기 위한 secret key>
    ```
 
-3. 프로젝트를 빌드합니다.
+3. _**Docker-compose.yml**_ 파일에 필요한 환경변수를 설정합니다.           
+
+```
+version: '3'
+
+services:
+  database:
+    container_name: mysql_db
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: my_springboot_db
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: <DB 비밀번호>
+      TZ: 'Asia/Seoul'
+    ports:
+      - "4000:3306"
+
+    command:
+      - "mysqld"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    networks:
+      - test_network
+  application:
+    container_name: docker-compose-test
+    image: thedarknight2008/springbootwebapp:latest
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: <DB URL>
+      SPRING_DATASOURCE_USERNAME:  <DB 아이디>
+      SPRING_DATASOURCE_PASSWORD:  <DB 비밀번호>
+
+    networks:
+      - test_network
+```
+4. 프로젝트를 빌드합니다.             
    ` ./gradlew build -x test `
 
-4. 애플리케이션 실행합니다.
+5. 애플리케이션 실행합니다.
 
-   `java -jar build/libs/member-0.0.1-SNAPSHOT.jar `          
-   **Warning**:  /build/libs 폴더에 프로젝트를 빌드한 jar 파일이 있는 지 확인해야 합니다.
+- Docker-compose로 실행할 경우       
+`docker-compose up --build `
+- 내장된 웹서버로 실행할 경우        
+`java -jar build/libs/member-0.0.1-SNAPSHOT.jar `          
+**Warning**:  /build/libs 폴더에 프로젝트를 빌드한 jar 파일이 있는 지 확인해야 합니다.
 
 - #### 앤드포인트 호출 방법
 
@@ -295,5 +343,17 @@ Headers
 404: 특정 게시글이 존재하지 않음  
 500: 예상치못한 서버 오류 
 ```
+<hr /> 
 
-<hr />
+      
+## *7. 가산점 추가 요구사항*
+
+### 1. 단위 테스트 코드 추가    
+   - src/test에 단위 테스트 코드를 작성하였습니다.      
+   - 201 또는 200 코드를 반환하는 성공 테스트와 실패 테스트 코드를 작성하였습니다.          
+
+### 2. docker compose를 이용하여 애플리케이션 환경을 구성한 경우
+   - [docker-compose를 사용할 경우](#2-애플리케이션의-실행-방법엔드포인트-호출-방법-포함)
+   - 목차2를 참고하세요
+
+### 3. 클라우드 환경(AWS, GCP)에 배포 환경을 설계하고 애플리케이션을 배포한 경우
