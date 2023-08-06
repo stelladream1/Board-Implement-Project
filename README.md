@@ -9,6 +9,9 @@
 5. [구현 방법 및 이유에 대한 간략한 설명](#5-구현-방법-및-이유에-대한-간략한-설명)
 6. [API 명세(request/response 포함)](#6-api-명세requestresponse-포함)        
 7. [가산점 추가 요구사항](#7-가산점-추가-요구사항)
+
+<hr/>
+
 ## *1. 지원자의 성명*
 
 안녕하세요 원티드 프리온보딩 8기 지원자 김현 입니다. 
@@ -92,8 +95,10 @@ services:
 
 - Docker-compose로 실행할 경우       
 `docker-compose up --build `
+
 - 내장된 웹서버로 실행할 경우        
-`java -jar build/libs/member-0.0.1-SNAPSHOT.jar `          
+`java -jar build/libs/member-0.0.1-SNAPSHOT.jar `                
+
 **Warning**:  /build/libs 폴더에 프로젝트를 빌드한 jar 파일이 있는 지 확인해야 합니다.
 
 - #### 앤드포인트 호출 방법
@@ -117,10 +122,41 @@ services:
 
 ![스크린샷 2023-08-03 191628](https://github.com/stelladream1/wanted-pre-onboarding-backend/assets/74993171/ffd57e5f-3e9a-4a64-85ae-29ab29d95557)
 
- 
+ ##### User Table
+
+- user_id
+  - 유저의 고유한 아이디를 저장합니다.
+  - AUTO_INCREMENT로 지정되어 자동으로 증가하는 값이 할당됩니다.
+  - BIGINT 타입으로 정의되어 NULL값이 올 수 없습니다. 
+- user_email
+  - 유저의 이메일을 저장합니다.
+  -  NULL값을 허용하지 않고 최대 255 글자까지 저장할 수 있습니다. 
+- user_password 
+  - 유저의 비밀번호를 저장합니다. 
+  -  NULL값을 허용하지 않고 최대 255 글자까지 저장할 수 있습니다. 
+- jwt_token: 
+  - JWT(Json Web Token)을 저장합니다. 
+  -  NULL값을 허용하고 최대 500 글자까지 저장할 수 있습니다. 
+
+##### Board Table
+
+- board_id
+  - 게시글의 고유한 아이디를 저장합니다.
+  - AUTO_INCREMENT로 지정되어 자동으로 증가하는 값이 할당됩니다.
+  - BIGINT 타입으로 정의되어 NULL값이 올 수 없습니다. 
+- board_title
+  - 게시글의 제목을 저장합니다.
+  -  NULL값을 허용하지 않고 최대 255 글자까지 저장할 수 있습니다. 
+- board_content
+  - 게시글의 내용을 저장합니다. 
+  -  NULL값을 허용하지 않고 최대 1024 글자까지 저장할 수 있습니다. 
+- user_id: 
+  - 게시글을 작성한 유저의 고유한 아이디를 저장합니다. 
+  - user 테이블의 id 컬럼을 참조하는 FOREIGN KEY 입니다. 
 <hr />
 
 ## *4. 구현한 API의 동작을 촬영한 데모 영상 링크*
+데모 영상은 [데모영상](https://drive.google.com/file/d/1isSH_qBQuyR9Qx_iRETsk0QMIzKMcf0v/view?usp=sharing) 에서 확인하실 수 있습니다.
 <hr />
 
 ## *5. 구현 방법 및 이유에 대한 간략한 설명*
@@ -153,10 +189,12 @@ services:
 
 ## *6. API 명세(request/response 포함)*
 [API 명세서](https://documenter.getpostman.com/view/27435050/2s9Xxwwts8#509c06c2-3965-4cf9-9e30-7538be99e49f)
+http://43.201.66.22:8080/
+
 ### 1. 회원가입
 > Request
 ```
-POST  http://15.164.50.0:8080/api/user/join
+POST  http://43.201.66.22:8080/api/user/join
 Body
    {
        "email": "testuser@wanted.com",
@@ -177,7 +215,7 @@ Body
 ### 2. 로그인
 > Request
 ```
-POST  http://15.164.50.0:8080/api/user/login
+POST  http://43.201.66.22:8080/api/user/login
 Body
    {
        "email": "testuser@wanted.com",
@@ -199,7 +237,7 @@ Body
 ### 3. 게시글 작성
 > Request
 ```
-POST  http://15.164.50.0:8080/api/board/post
+POST  http://43.201.66.22:8080/api/board/post
 
 Headers
    {
@@ -233,7 +271,7 @@ Body
 ### 4. 게시글 조회
 > Request
 ```
-GET  http://15.164.50.0:8080/api/board/list?page={pageNum}
+GET  http://43.201.66.22:8080/api/board/list?page={pageNum}
 ```
 > Response
 ```
@@ -266,7 +304,7 @@ GET  http://15.164.50.0:8080/api/board/list?page={pageNum}
 ### 5. 특정 게시글 조회
 > Request
 ```
-GET  http://15.164.50.0:8080/api/board/list/{id}
+GET  http://43.201.66.22:8080/api/board/list/{id}
 ```
 > Response
 ```
@@ -288,7 +326,7 @@ GET  http://15.164.50.0:8080/api/board/list/{id}
 ### 6. 특정 게시글 수정
 > Request
 ```
-PUT  http://15.164.50.0:8080/api/board/update/{id}
+PUT  http://43.201.66.22:8080/api/board/update/{id}
 
 Headers
    {
@@ -323,7 +361,7 @@ Body
 ### 7. 특정 게시글 삭제 
 > Request
 ```
-DELETE  http://15.164.50.0:8080/api/board/delete/{id}
+DELETE  http://43.201.66.22:8080/api/board/delete/{id}
 
 Headers
    {
@@ -350,10 +388,15 @@ Headers
 
 ### 1. 단위 테스트 코드 추가    
    - src/test에 단위 테스트 코드를 작성하였습니다.      
-   - 201 또는 200 코드를 반환하는 성공 테스트와 실패 테스트 코드를 작성하였습니다.          
+   - 201 또는 200 코드를 반환하는 성공 테스트와 실패 테스트 코드를 작성하였습니다.
+   - 회원가입, 로그인, 게시글 작성, 수정,삭제, 조회에 대한 단위 테스트 코드입니다. 
 
 ### 2. docker compose를 이용하여 애플리케이션 환경을 구성한 경우
-   - [docker-compose를 사용할 경우](#2-애플리케이션의-실행-방법엔드포인트-호출-방법-포함)
-   - 목차2를 참고하세요
+   - 자세한 사항은 [목차2](#2-애플리케이션의-실행-방법엔드포인트-호출-방법-포함)를 참고해주세요.
+
 
 ### 3. 클라우드 환경(AWS, GCP)에 배포 환경을 설계하고 애플리케이션을 배포한 경우
+![Blank diagram (2)](https://github.com/stelladream1/wanted-pre-onboarding-backend/assets/74993171/05f93649-f25d-40b2-8400-651fdd7e3a26)
+- AWS 배포 URL: http://43.201.66.22:8080/  
+- 자세한 사항은 [목차6](#6-api-명세requestresponse-포함)을 참고해주세요. 
+
